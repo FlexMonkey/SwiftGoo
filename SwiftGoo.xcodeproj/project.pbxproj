@@ -12,6 +12,8 @@
 		3EC4FB671CBE62A200BC5949 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3EC4FB651CBE62A200BC5949 /* Main.storyboard */; };
 		3EC4FB691CBE62A200BC5949 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3EC4FB681CBE62A200BC5949 /* Assets.xcassets */; };
 		3EC4FB6C1CBE62A200BC5949 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3EC4FB6A1CBE62A200BC5949 /* LaunchScreen.storyboard */; };
+		3EC4FB741CBE62F800BC5949 /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC4FB731CBE62F800BC5949 /* ImageView.swift */; };
+		3EC4FB761CBE634700BC5949 /* monalisa.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 3EC4FB751CBE634700BC5949 /* monalisa.jpg */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		3EC4FB681CBE62A200BC5949 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		3EC4FB6B1CBE62A200BC5949 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3EC4FB6D1CBE62A200BC5949 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3EC4FB731CBE62F800BC5949 /* ImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
+		3EC4FB751CBE634700BC5949 /* monalisa.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = monalisa.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,12 +58,14 @@
 		3EC4FB601CBE62A200BC5949 /* SwiftGoo */ = {
 			isa = PBXGroup;
 			children = (
+				3EC4FB751CBE634700BC5949 /* monalisa.jpg */,
 				3EC4FB611CBE62A200BC5949 /* AppDelegate.swift */,
 				3EC4FB631CBE62A200BC5949 /* ViewController.swift */,
 				3EC4FB651CBE62A200BC5949 /* Main.storyboard */,
 				3EC4FB681CBE62A200BC5949 /* Assets.xcassets */,
 				3EC4FB6A1CBE62A200BC5949 /* LaunchScreen.storyboard */,
 				3EC4FB6D1CBE62A200BC5949 /* Info.plist */,
+				3EC4FB731CBE62F800BC5949 /* ImageView.swift */,
 			);
 			path = SwiftGoo;
 			sourceTree = "<group>";
@@ -125,6 +131,7 @@
 				3EC4FB6C1CBE62A200BC5949 /* LaunchScreen.storyboard in Resources */,
 				3EC4FB691CBE62A200BC5949 /* Assets.xcassets in Resources */,
 				3EC4FB671CBE62A200BC5949 /* Main.storyboard in Resources */,
+				3EC4FB761CBE634700BC5949 /* monalisa.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,6 +142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3EC4FB741CBE62F800BC5949 /* ImageView.swift in Sources */,
 				3EC4FB641CBE62A200BC5949 /* ViewController.swift in Sources */,
 				3EC4FB621CBE62A200BC5949 /* AppDelegate.swift in Sources */,
 			);
