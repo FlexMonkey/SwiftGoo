@@ -10,10 +10,27 @@ import UIKit
 
 class ViewController: UIViewController
 {
-    let imageView = OpenGLImageView()
-    let mona = CIImage(image: UIImage(named: "monalisa.jpg")!)
+    lazy var toolbar: UIToolbar =
+    {
+        [unowned self] in
+        
+        let toolbar = UIToolbar()
+        
+        let loadBarButtonItem = UIBarButtonItem(title: "Load", style: .Plain, target: self, action: #selector(ViewController.loadImage))
+        let resetBarButtonItem = UIBarButtonItem(title: "Reset", style: .Plain, target: self, action: #selector(ViewController.reset))
+        
+        let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
+        
+         toolbar.setItems([loadBarButtonItem, spacer, resetBarButtonItem], animated: true)
+        
+        return toolbar
+    }()
     
-    let accumulator = CIImageAccumulator(extent: CGRect(x: 0, y: 0, width: 640, height: 640),
+    let imageView = OpenGLImageView()
+    
+    var mona = CIImage(image: UIImage(named: "monalisa.jpg")!)
+    
+    var accumulator = CIImageAccumulator(extent: CGRect(x: 0, y: 0, width: 640, height: 640),
                                          format: kCIFormatARGB8)
     
     let warpKernel = CIWarpKernel(string:
@@ -36,20 +53,65 @@ class ViewController: UIViewController
     override func viewDidLoad()
     {
         super.viewDidLoad()
+        
+        view.backgroundColor = UIColor.darkGrayColor()
+        imageView.backgroundColor = UIColor.darkGrayColor()
     
         view.addSubview(imageView)
+        view.addSubview(toolbar)
         
         accumulator.setImage(mona!)
         
         imageView.image = accumulator.image()
     }
 
+    // MARK: Layout
+    
     override func viewDidLayoutSubviews()
     {
+        toolbar.frame = CGRect(x: 0,
+                               y: view.frame.height - toolbar.intrinsicContentSize().height,
+                               width: view.frame.width,
+                               height: toolbar.intrinsicContentSize().height)
         
-        imageView.frame = view.bounds.insetBy(dx: 10, dy: topLayoutGuide.length)
+        imageView.frame = CGRect(x: 0,
+                                 y: topLayoutGuide.length + 5,
+                                 width: view.frame.width,
+                                 height: view.frame.height -
+                                    topLayoutGuide.length -
+                                    toolbar.intrinsicContentSize().height - 10)
     }
 
+    override func preferredStatusBarStyle() -> UIStatusBarStyle
+    {
+        return .LightContent
+    }
+    
+    // MARK: Image loading
+    
+    func loadImage()
+    {
+        let imagePicker = UIImagePickerController()
+        
+        imagePicker.delegate = self
+        imagePicker.allowsEditing = false
+        imagePicker.modalInPopover = false
+        imagePicker.sourceType = UIImagePickerControllerSourceType.SavedPhotosAlbum
+        
+        presentViewController(imagePicker, animated: true, completion: nil)
+    }
+    
+    // MARL: Reset
+    
+    func reset()
+    {
+        accumulator.setImage(mona!)
+        
+        imageView.image = accumulator.image()
+    }
+    
+    // MARK: Touch handling
+    
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
         guard let touch = touches.first,
@@ -101,7 +163,24 @@ class ViewController: UIViewController
             imageView.image = accumulator.image()
         }
     }
-    
-    
+}
+
+extension ViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate
+{
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject])
+    {
+        if let rawImage = info[UIImagePickerControllerOriginalImage] as? UIImage
+        {
+            mona = CIImage(image: rawImage)!
+            
+            accumulator = CIImageAccumulator(extent: mona!.extent,
+                                             format: kCIFormatARGB8)
+            
+            accumulator.setImage(mona!)
+            imageView.image = accumulator.image()
+        }
+        
+        dismissViewControllerAnimated(true, completion: nil)
+    }
 }
 
