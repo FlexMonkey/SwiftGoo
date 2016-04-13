@@ -56,6 +56,16 @@ class OpenGLImageView: GLKView
             setNeedsDisplay()
         }
     }
+    
+    override func layoutSubviews()
+    {
+        super.layoutSubviews()
+        
+        setNeedsDisplay()
+    }
+    
+    private (set) var imageExtent = CGRectZero
+    private (set) var imageScale = CGFloat(0)
 }
 
 extension OpenGLImageView: GLKViewDelegate
@@ -88,6 +98,13 @@ extension OpenGLImageView: GLKViewDelegate
         ciContext.drawImage(image,
             inRect: targetRect,
             fromRect: image.extent)
+        
+        imageExtent = CGRect(x: targetRect.origin.x / contentScaleFactor,
+                             y: targetRect.origin.y / contentScaleFactor,
+                             width: targetRect.width / contentScaleFactor,
+                             height: targetRect.height / contentScaleFactor)
+        
+        imageScale = targetRect.height / contentScaleFactor / image.extent.height
     }
 }
 

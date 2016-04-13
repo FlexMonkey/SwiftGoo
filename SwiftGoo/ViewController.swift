@@ -46,26 +46,27 @@ class ViewController: UIViewController
 
     override func viewDidLayoutSubviews()
     {
-        imageView.frame = CGRect(x: 0, y: 0, width: 640, height: 640)
         
-        imageView.frame.origin.x = view.frame.midX - imageView.frame.midX
-        imageView.frame.origin.y = view.frame.midY - imageView.frame.midY
+        imageView.frame = view.bounds.insetBy(dx: 10, dy: topLayoutGuide.length)
     }
 
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
         guard let touch = touches.first,
             coalescedTouches = event?.coalescedTouchesForTouch(touch)
-            where imageView.bounds.contains(touch.locationInView(imageView)) else
+            where imageView.imageExtent.contains(touch.locationInView(imageView)) else
         {
             return
         }
         
         for coalescedTouch in coalescedTouches
         {
-            let locationInViewY = accumulator.image().extent.height - coalescedTouch.locationInView(imageView).y
+            let locationInImageY = (imageView.frame.height - coalescedTouch.locationInView(imageView).y - imageView.imageExtent.origin.y) / imageView.imageScale
+            let locationInImageX = (coalescedTouch.locationInView(imageView).x - imageView.imageExtent.origin.x) / imageView.imageScale
             
-            let location = CIVector(x: coalescedTouch.locationInView(imageView).x, y: locationInViewY)
+            let location = CIVector(x: locationInImageX,
+                                    y: locationInImageY)
+            
             let direction = CIVector(x: coalescedTouch.previousLocationInView(imageView).x - touch.locationInView(imageView).x,
                                      y: coalescedTouch.locationInView(imageView).y - touch.previousLocationInView(imageView).y)
             
@@ -83,9 +84,7 @@ class ViewController: UIViewController
                 radius = normalisedForce * 200
                 force = normalisedForce * 0.4
             }
-            
-            print(radius, force)
-            
+
             let arguments = [radius, force, location, direction]
             
             let image = warpKernel.applyWithExtent(accumulator.image().extent,
