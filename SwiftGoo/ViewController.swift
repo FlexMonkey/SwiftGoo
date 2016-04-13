@@ -17,7 +17,7 @@ class ViewController: UIViewController
                                          format: kCIFormatARGB8)
     
     let warpKernel = CIWarpKernel(string:
-        "kernel vec2 warp(float radius, vec2 location, vec2 direction)" +
+        "kernel vec2 gooWarp(float radius, float force,  vec2 location, vec2 direction)" +
         "{ " +
         " float dist = distance(location, destCoord()); " +
         
@@ -27,7 +27,7 @@ class ViewController: UIViewController
         "     float normalisedDistance = 1.0 - (dist / radius); " +
         "     float smoothedDistance = smoothstep(0.0, 1.0, normalisedDistance); " +
             
-        "    return destCoord() + (direction * 0.2) * smoothedDistance; " +
+        "    return destCoord() + (direction * force) * smoothedDistance; " +
         "  } else { " +
         "  return destCoord();" +
         "  }" +
@@ -61,7 +61,7 @@ class ViewController: UIViewController
             return
         }
         
-        for coalescedTouch in [touch] // coalescedTouches
+        for coalescedTouch in coalescedTouches
         {
             let locationInViewY = accumulator.image().extent.height - coalescedTouch.locationInView(imageView).y
             
@@ -69,14 +69,31 @@ class ViewController: UIViewController
             let direction = CIVector(x: coalescedTouch.previousLocationInView(imageView).x - touch.locationInView(imageView).x,
                                      y: coalescedTouch.locationInView(imageView).y - touch.previousLocationInView(imageView).y)
             
-            let arguments = [CGFloat(100), location, direction]
+            let radius: CGFloat
+            let force: CGFloat
+            
+            if coalescedTouch.maximumPossibleForce == 0
+            {
+                radius = 100
+                force = 0.2
+            }
+            else
+            {
+                let normalisedForce = coalescedTouch.force / coalescedTouch.maximumPossibleForce
+                radius = normalisedForce * 200
+                force = normalisedForce * 0.4
+            }
+            
+            print(radius, force)
+            
+            let arguments = [radius, force, location, direction]
             
             let image = warpKernel.applyWithExtent(accumulator.image().extent,
                                                     roiCallback:
-                {
-                    (index, rect) in
-                    return rect
-                },
+                                                        {
+                                                            (index, rect) in
+                                                            return rect
+                                                        },
                                                     inputImage: accumulator.image(),
                                                     arguments: arguments)
             
