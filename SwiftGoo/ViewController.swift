@@ -28,7 +28,7 @@ class ViewController: UIViewController
     
     let imageView = OpenGLImageView()
     
-    var mona = CIImage(image: UIImage(named: "monalisa.jpg")!)
+    var mona = CIImage(image: UIImage(named: "monalisa.jpg")!)!
     
     var accumulator = CIImageAccumulator(extent: CGRect(x: 0, y: 0, width: 640, height: 640),
                                          format: kCIFormatARGB8)
@@ -60,7 +60,7 @@ class ViewController: UIViewController
         view.addSubview(imageView)
         view.addSubview(toolbar)
         
-        accumulator.setImage(mona!)
+        accumulator.setImage(mona)
         
         imageView.image = accumulator.image()
     }
@@ -105,7 +105,7 @@ class ViewController: UIViewController
     
     func reset()
     {
-        accumulator.setImage(mona!)
+        accumulator.setImage(mona)
         
         imageView.image = accumulator.image()
     }
@@ -132,19 +132,17 @@ class ViewController: UIViewController
             let direction = CIVector(x: coalescedTouch.previousLocationInView(imageView).x - touch.locationInView(imageView).x,
                                      y: coalescedTouch.locationInView(imageView).y - touch.previousLocationInView(imageView).y)
             
-            let radius: CGFloat
+            let radius: CGFloat = max(mona.extent.width, mona.extent.height) / 10
             let force: CGFloat
             
             if coalescedTouch.maximumPossibleForce == 0
             {
-                radius = 100
                 force = 0.2
             }
             else
             {
                 let normalisedForce = coalescedTouch.force / coalescedTouch.maximumPossibleForce
-                radius = normalisedForce * 200
-                force = normalisedForce * 0.4
+                force = 0.1 + (normalisedForce * 0.2)
             }
 
             let arguments = [radius, force, location, direction]
@@ -173,10 +171,10 @@ extension ViewController: UINavigationControllerDelegate, UIImagePickerControlle
         {
             mona = CIImage(image: rawImage)!
             
-            accumulator = CIImageAccumulator(extent: mona!.extent,
+            accumulator = CIImageAccumulator(extent: mona.extent,
                                              format: kCIFormatARGB8)
             
-            accumulator.setImage(mona!)
+            accumulator.setImage(mona)
             imageView.image = accumulator.image()
         }
         
