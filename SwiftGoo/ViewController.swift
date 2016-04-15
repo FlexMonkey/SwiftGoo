@@ -111,7 +111,7 @@ class ViewController: UIViewController
     }
     
     // MARK: Touch handling
-    
+  
     override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
         guard let touch = touches.first,
@@ -128,21 +128,26 @@ class ViewController: UIViewController
             
             let location = CIVector(x: locationInImageX,
                                     y: locationInImageY)
-            
-            let direction = CIVector(x: coalescedTouch.previousLocationInView(imageView).x - touch.locationInView(imageView).x,
-                                     y: coalescedTouch.locationInView(imageView).y - touch.previousLocationInView(imageView).y)
-            
-            let radius: CGFloat = max(mona.extent.width, mona.extent.height) / 10
+          
+            let directionScale = 2 / imageView.imageScale
+          
+            let direction = CIVector(x: (coalescedTouch.previousLocationInView(imageView).x - coalescedTouch.locationInView(imageView).x) * directionScale,
+                                     y: (coalescedTouch.locationInView(imageView).y - coalescedTouch.previousLocationInView(imageView).y) * directionScale)
+          
+            let r = max(mona.extent.width, mona.extent.height) / 10
+            let radius: CGFloat
             let force: CGFloat
-            
+     
             if coalescedTouch.maximumPossibleForce == 0
             {
                 force = 0.2
+                radius = r
             }
             else
             {
                 let normalisedForce = coalescedTouch.force / coalescedTouch.maximumPossibleForce
-                force = 0.1 + (normalisedForce * 0.2)
+                force = 0.2 + (normalisedForce * 0.2)
+                radius = (r / 2) + (r * normalisedForce)
             }
 
             let arguments = [radius, force, location, direction]
@@ -169,7 +174,10 @@ extension ViewController: UINavigationControllerDelegate, UIImagePickerControlle
     {
         if let rawImage = info[UIImagePickerControllerOriginalImage] as? UIImage
         {
+            let scale = 1280 / max(rawImage.size.width, rawImage.size.height)
+
             mona = CIImage(image: rawImage)!
+                .imageByApplyingFilter("CILanczosScaleTransform", withInputParameters: [kCIInputScaleKey: scale])
             
             accumulator = CIImageAccumulator(extent: mona.extent,
                                              format: kCIFormatARGB8)
