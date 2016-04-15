@@ -16,10 +16,22 @@ class ViewController: UIViewController
         
         let toolbar = UIToolbar()
         
-        let loadBarButtonItem = UIBarButtonItem(title: "Load", style: .Plain, target: self, action: #selector(ViewController.loadImage))
-        let resetBarButtonItem = UIBarButtonItem(title: "Reset", style: .Plain, target: self, action: #selector(ViewController.reset))
+        let loadBarButtonItem = UIBarButtonItem(
+            title: "Load",
+            style: .Plain,
+            target: self,
+            action: #selector(ViewController.loadImage))
         
-        let spacer = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace, target: nil, action: nil)
+        let resetBarButtonItem = UIBarButtonItem(
+            title: "Reset",
+            style: .Plain,
+            target: self,
+            action: #selector(ViewController.reset))
+        
+        let spacer = UIBarButtonItem(
+            barButtonSystemItem: UIBarButtonSystemItem.FlexibleSpace,
+            target: nil,
+            action: nil)
         
          toolbar.setItems([loadBarButtonItem, spacer, resetBarButtonItem], animated: true)
         
@@ -30,8 +42,9 @@ class ViewController: UIViewController
     
     var mona = CIImage(image: UIImage(named: "monalisa.jpg")!)!
     
-    var accumulator = CIImageAccumulator(extent: CGRect(x: 0, y: 0, width: 640, height: 640),
-                                         format: kCIFormatARGB8)
+    var accumulator = CIImageAccumulator(
+        extent: CGRect(x: 0, y: 0, width: 640, height: 640),
+        format: kCIFormatARGB8)
     
     let warpKernel = CIWarpKernel(string:
         "kernel vec2 gooWarp(float radius, float force,  vec2 location, vec2 direction)" +
@@ -69,17 +82,19 @@ class ViewController: UIViewController
     
     override func viewDidLayoutSubviews()
     {
-        toolbar.frame = CGRect(x: 0,
-                               y: view.frame.height - toolbar.intrinsicContentSize().height,
-                               width: view.frame.width,
-                               height: toolbar.intrinsicContentSize().height)
+        toolbar.frame = CGRect(
+            x: 0,
+            y: view.frame.height - toolbar.intrinsicContentSize().height,
+            width: view.frame.width,
+            height: toolbar.intrinsicContentSize().height)
         
-        imageView.frame = CGRect(x: 0,
-                                 y: topLayoutGuide.length + 5,
-                                 width: view.frame.width,
-                                 height: view.frame.height -
-                                    topLayoutGuide.length -
-                                    toolbar.intrinsicContentSize().height - 10)
+        imageView.frame = CGRect(
+            x: 0,
+            y: topLayoutGuide.length + 5,
+            width: view.frame.width,
+            height: view.frame.height -
+                topLayoutGuide.length -
+                toolbar.intrinsicContentSize().height - 10)
     }
 
     override func preferredStatusBarStyle() -> UIStatusBarStyle
@@ -126,13 +141,15 @@ class ViewController: UIViewController
             let locationInImageY = (imageView.frame.height - coalescedTouch.locationInView(imageView).y - imageView.imageExtent.origin.y) / imageView.imageScale
             let locationInImageX = (coalescedTouch.locationInView(imageView).x - imageView.imageExtent.origin.x) / imageView.imageScale
             
-            let location = CIVector(x: locationInImageX,
-                                    y: locationInImageY)
+            let location = CIVector(
+                x: locationInImageX,
+                y: locationInImageY)
           
             let directionScale = 2 / imageView.imageScale
           
-            let direction = CIVector(x: (coalescedTouch.previousLocationInView(imageView).x - coalescedTouch.locationInView(imageView).x) * directionScale,
-                                     y: (coalescedTouch.locationInView(imageView).y - coalescedTouch.previousLocationInView(imageView).y) * directionScale)
+            let direction = CIVector(
+                x: (coalescedTouch.previousLocationInView(imageView).x - coalescedTouch.locationInView(imageView).x) * directionScale,
+                y: (coalescedTouch.locationInView(imageView).y - coalescedTouch.previousLocationInView(imageView).y) * directionScale)
           
             let r = max(mona.extent.width, mona.extent.height) / 10
             let radius: CGFloat
@@ -152,19 +169,20 @@ class ViewController: UIViewController
 
             let arguments = [radius, force, location, direction]
             
-            let image = warpKernel.applyWithExtent(accumulator.image().extent,
-                                                    roiCallback:
-                                                        {
-                                                            (index, rect) in
-                                                            return rect
-                                                        },
-                                                    inputImage: accumulator.image(),
-                                                    arguments: arguments)
+            let image = warpKernel.applyWithExtent(
+                accumulator.image().extent,
+                roiCallback:
+                {
+                    (index, rect) in
+                    return rect
+                },
+                inputImage: accumulator.image(),
+                arguments: arguments)
             
             accumulator.setImage(image!)
-            
-            imageView.image = accumulator.image()
         }
+        
+        imageView.image = accumulator.image()
     }
 }
 
@@ -175,12 +193,14 @@ extension ViewController: UINavigationControllerDelegate, UIImagePickerControlle
         if let rawImage = info[UIImagePickerControllerOriginalImage] as? UIImage
         {
             let scale = 1280 / max(rawImage.size.width, rawImage.size.height)
-
-            mona = CIImage(image: rawImage)!
+            
+            mona = CIImage(
+                image: rawImage)!
                 .imageByApplyingFilter("CILanczosScaleTransform", withInputParameters: [kCIInputScaleKey: scale])
             
-            accumulator = CIImageAccumulator(extent: mona.extent,
-                                             format: kCIFormatARGB8)
+            accumulator = CIImageAccumulator(
+                extent: mona.extent,
+                format: kCIFormatARGB8)
             
             accumulator.setImage(mona)
             imageView.image = accumulator.image()
