@@ -1,5 +1,6 @@
 # SwiftGoo
-Kai's Power Tools Goo - written in Swift!
+### Kai's Power Tools Goo - written in Swift!
+### Companion project to [Recreating Kai's Power Tools Goo in Swift](http://flexmonkey.blogspot.co.uk/2016/04/recreating-kais-power-tools-goo-in-swift.html)
 
 ![SwiftGoo/screenshot.png](SwiftGoo/screenshot.png)
 
